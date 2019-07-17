@@ -330,8 +330,7 @@ impl Ed25519KeyPair {
     /// Generate a new Ed25519 key pair with the provided source of randomness.
     pub fn generate<R: CryptoRng + RngCore>(csprng: &mut R) -> Ed25519KeyPair {
         use ed25519_dalek::Keypair;
-        use sha2::Sha512;
-        let Keypair { public, secret } = Keypair::generate::<Sha512, _>(csprng);
+        let Keypair { public, secret } = Keypair::generate(csprng);
         Ed25519KeyPair {
             public: Ed25519KeyPublic(public),
             secret,
@@ -342,18 +341,19 @@ impl Ed25519KeyPair {
 
     /// Sign a message using this key.
     pub fn sign(&self, msg: &[u8]) -> Signature {
-        use sha2::Sha512;
-        self.secret.expand::<Sha512>()
-            .sign::<Sha512>(msg, &self.public.0).into()
+        ed25519_dalek::ExpandedSecretKey::from(&self.secret)
+            .sign(msg, &self.public.0).into()
     }
 
     /// Perform a Diffie-Hellman key exchange with the provided public key.
     pub fn diffie_hellman(&self, peer: &Ed25519KeyPublic) -> Result<KeyMaterial> {
-        use x25519_dalek::diffie_hellman;
         use crate::convert::{convert_public_key, convert_secret_key};
         let secret = convert_secret_key(&self.secret)?;
         let public = convert_public_key(&peer.to_bytes())?;
-        Ok(diffie_hellman(secret.as_bytes(), public.as_bytes()).into())
+        let public = x25519_dalek::PublicKey::from(public.as_bytes().to_owned());
+        let shared = x25519_dalek::StaticSecret::from(secret.0)
+            .diffie_hellman(&public);
+        Ok(KeyMaterial::from(shared.as_bytes().to_owned()))
     }
 }
 
@@ -375,8 +375,7 @@ impl Ed25519KeyPublic {
 
     /// Verify a message signed by this key.
     pub fn verify(&self, msg: &[u8], sig: &Signature) -> Result<()> {
-        use sha2::Sha512;
-        Ok(self.0.verify::<Sha512>(msg, sig.as_dalek())?)
+        Ok(self.0.verify(msg, sig.as_dalek())?)
     }
 }
 
@@ -649,10 +648,9 @@ pub struct RatchetKeyPair {
 
 impl RatchetKeyPair {
     pub fn generate<R: CryptoRng + RngCore>(csprng: &mut R) -> RatchetKeyPair {
-        use sha2::Sha512;
         use crate::convert::{convert_public_key, convert_secret_key};
 
-        let ed_pair = ed25519_dalek::Keypair::generate::<Sha512, _>(csprng);
+        let ed_pair = ed25519_dalek::Keypair::generate(csprng);
 
         // TODO: not unwrap
         let public = convert_public_key(&ed_pair.public.as_bytes()).unwrap();

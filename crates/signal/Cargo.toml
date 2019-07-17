@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Andrew Dona-Couch <signal-rs@andrewcou.ch>"]
 
 [dependencies]
-curve25519-dalek = "0.21.0"
+curve25519-dalek = "1"
 rand = "0.5.5"
 
 double-ratchet = { path = "../double-ratchet" }
