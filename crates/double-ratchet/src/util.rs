@@ -47,7 +47,7 @@ pub fn hmac(
     let hash = hmac::hmac(&hmac_key, input).unwrap();
 
     let mut res = [0; 32];
-    res.copy_from_slice(hash.unprotected_as_bytes()[..32]);
+    res.copy_from_slice(&hash.unprotected_as_bytes()[..32]);
 
     res
 }
@@ -89,7 +89,16 @@ pub fn hmac_sha512_two_slices(
     mac.update(input2).unwrap();
 
     // TODO: not unwrap!
-    mac.finalize().unwrap()
+    let mut out = [0u8; 64];
+    let tag = mac.finalize().unwrap();
+    let tag_bytes:&[u8] = tag.unprotected_as_bytes();
+
+    let mut i = 0;
+    for b in tag_bytes {
+        out[i] = *b;
+        i += 1;
+    }
+    out
 }
 
 pub fn aes256_cbc_pkcs7_encrypt<'a>(

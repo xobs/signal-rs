@@ -214,9 +214,8 @@ impl DoubleRatchet {
 }
 
 pub fn dh(peer: &RatchetKeyPublic, me: &RatchetKeySecret) -> SessionKey {
-    use x25519_dalek::diffie_hellman;
+    let peer = x25519_dalek::PublicKey::from(peer.as_bytes().to_owned());
+    let shared = x25519_dalek::StaticSecret::from(me.as_bytes().to_owned()).diffie_hellman(&peer);
 
-    let bytes = diffie_hellman(me.as_bytes(), peer.as_bytes());
-
-    SessionKey::from(&bytes[..])
+    SessionKey::from(&shared.as_bytes()[..])
 }
