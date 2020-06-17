@@ -5,7 +5,8 @@ authors = ["Andrew Dona-Couch <signal-rs@andrewcou.ch>"]
 
 [dependencies]
 curve25519-dalek = "1"
-rand = "0.5.5"
+rand = "0.7.3"
+rand_core = "0.5.1"
 
 double-ratchet = { path = "../double-ratchet" }
 signal-common = { path = "../signal-common" }

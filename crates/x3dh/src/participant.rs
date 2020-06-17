@@ -5,7 +5,7 @@
 
 use std::collections::HashMap;
 
-use rand::{CryptoRng, RngCore};
+use rand_core::{CryptoRng, RngCore};
 
 use signal_common::error::{Error, Result};
 use signal_common::keys::{
@@ -175,7 +175,7 @@ impl Participant {
 
 #[cfg(test)]
 mod tests {
-    use rand::OsRng;
+    use rand_core::OsRng;
 
     use crate::keyserver::Keyserver;
 
@@ -183,7 +183,7 @@ mod tests {
 
     #[test]
     fn test_exchange() {
-        let mut csprng = OsRng::new().unwrap();
+        let mut csprng = OsRng;
 
         let mut server = Keyserver::new();
 

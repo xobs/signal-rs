@@ -137,7 +137,7 @@ fn kdf(
 
 #[cfg(test)]
 mod tests {
-    use rand::OsRng;
+    use rand_core::OsRng;
 
     use signal_common::keys::PrekeyBundle;
 
@@ -145,7 +145,7 @@ mod tests {
 
     #[test]
     fn test_key_exchange() {
-        let mut csprng = OsRng::new().unwrap();
+        let mut csprng = OsRng;
 
         let (bundle, secrets) = {
             let ik_b = IdentityKeyPair::generate(&mut csprng);

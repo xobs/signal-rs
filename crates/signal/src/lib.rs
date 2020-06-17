@@ -1,5 +1,6 @@
 extern crate curve25519_dalek;
 extern crate rand;
+extern crate rand_core;
 
 extern crate double_ratchet;
 extern crate signal_common;
@@ -7,7 +8,7 @@ extern crate x3dh;
 
 #[cfg(test)]
 mod tests {
-    use rand::OsRng;
+    use rand_core::OsRng;
 
     use double_ratchet::session::SessionBuilder;
     use signal_common::keys::{ChainKey, RatchetKeyPair};
@@ -16,7 +17,7 @@ mod tests {
 
     #[test]
     fn test_everything() {
-        let mut csprng = OsRng::new().unwrap();
+        let mut csprng = OsRng;
 
         // First, the key agreement with X3DH.
 

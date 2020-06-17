@@ -69,28 +69,48 @@ pub fn convert_ed25519_to_x25519(ed25519: &Keypair) -> Result<X25519Keypair> {
 
 #[cfg(test)]
 mod tests {
-    use rand::OsRng;
+    use rand_core::OsRng;
     use sha2::Sha512;
     use ed25519_dalek::Keypair;
-    use x25519_dalek::generate_public;
+    // use x25519_dalek::generate_public;
+    use x25519_dalek::{StaticSecret, EphemeralSecret, PublicKey};
 
     use super::*;
 
+    // The original test (which presumably worked):
+    // fn test_convert_isomorphism() {
+    //     let mut csprng = OsRng::new().unwrap();
+
+    //     let pair = Keypair::generate::<Sha512, _>(&mut csprng);
+    //     let conv = convert_ed25519_to_x25519(&pair).unwrap();
+
+    //     let regen_pub = generate_public(&conv.secret.as_bytes());
+
+    //     let conv_len = conv.public.as_bytes().len();
+    //     let regen_len = regen_pub.as_bytes().len();
+
+    //     assert_eq!(conv_len, regen_len);
+    //     for i in 0..conv_len {
+    //         assert_eq!(conv.public.as_bytes()[i], regen_pub.as_bytes()[i]);
+    //     }
+    // }
+
     #[test]
     fn test_convert_isomorphism() {
-        let mut csprng = OsRng::new().unwrap();
+        let mut csprng = rand::rngs::OsRng;
 
-        let pair = Keypair::generate::<Sha512, _>(&mut csprng);
+        let pair = Keypair::generate(&mut csprng);
         let conv = convert_ed25519_to_x25519(&pair).unwrap();
 
-        let regen_pub = generate_public(&conv.secret.as_bytes());
+        let regen_pub = PublicKey::from(*conv.secret.as_bytes());
 
         let conv_len = conv.public.as_bytes().len();
-        let regen_len = regen_pub.as_bytes().len();
+        let regen_bytes = regen_pub.as_bytes();
+        let regen_len = regen_bytes.len();
 
         assert_eq!(conv_len, regen_len);
         for i in 0..conv_len {
-            assert_eq!(conv.public.as_bytes()[i], regen_pub.as_bytes()[i]);
+            assert_eq!(conv.public.as_bytes()[i], regen_bytes[i]);
         }
     }
 }

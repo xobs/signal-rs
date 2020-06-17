@@ -112,7 +112,7 @@ impl Keyserver {
 
 #[cfg(test)]
 mod tests {
-    use rand::OsRng;
+    use rand_core::OsRng;
 
     use signal_common::keys::{
         IdentityKeyPair,
@@ -125,7 +125,7 @@ mod tests {
 
     #[test]
     fn test_keyserver() {
-        let mut csprng = OsRng::new().unwrap();
+        let mut csprng = OsRng;
 
         let mut server = Keyserver::new();
 
@@ -162,7 +162,7 @@ mod tests {
 
     #[test]
     fn test_rejects_bad_sigs() {
-        let mut csprng = OsRng::new().unwrap();
+        let mut csprng = OsRng;
 
         let mut server = Keyserver::new();
 

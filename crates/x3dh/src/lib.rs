@@ -50,6 +50,7 @@ extern crate curve25519_dalek;
 extern crate ed25519_dalek;
 extern crate orion;
 extern crate rand;
+extern crate rand_core;
 extern crate sha2;
 extern crate x25519_dalek;
 

@@ -1,6 +1,7 @@
 use std::ops::Deref;
 
-use rand::{CryptoRng, Rng};
+use rand::{Rng};
+use rand_core::CryptoRng;
 
 use signal_common::keys::{
     ChainKey,

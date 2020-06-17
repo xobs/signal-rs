@@ -3,6 +3,8 @@ extern crate capnp;
 extern crate capnp_rpc;
 extern crate futures;
 extern crate rand;
+extern crate rand_core;
+extern crate rand_chacha;
 extern crate tokio;
 
 extern crate double_ratchet;
@@ -66,8 +68,10 @@ pub fn main() {
     let server: keyserver_capnp::keyserver::Client = rpc_system.bootstrap(rpc_twoparty_capnp::Side::Server);
     runtime.spawn(rpc_system.map_err(|_e| ()));
 
-    use rand::{ChaChaRng, OsRng, SeedableRng};
-    let mut csprng = ChaChaRng::from_rng(OsRng::new().unwrap()).unwrap();
+    use rand::SeedableRng;
+    use rand_core::OsRng;
+    use rand_chacha::ChaChaRng;
+    let mut csprng = ChaChaRng::from_rng(OsRng).unwrap();
 
     // Initialize my keys
     println!("{}: Intializing my keys...", actor);

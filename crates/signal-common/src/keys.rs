@@ -10,7 +10,7 @@
 use std::hash::{Hash, Hasher};
 
 use curve25519_dalek::montgomery::MontgomeryPoint;
-use rand::{CryptoRng, RngCore};
+use rand_core::{CryptoRng, RngCore};
 
 use crate::error::{Error, Result};
 
@@ -387,13 +387,13 @@ impl std::hash::Hash for Ed25519KeyPublic {
 
 #[cfg(test)]
 mod x3dh_tests {
-    use rand::OsRng;
+    use rand_core::OsRng;
 
     use super::*;
 
     #[test]
     fn test_signature() {
-        let mut csprng = OsRng::new().unwrap();
+        let mut csprng = OsRng;
         let keypair = IdentityKeyPair::generate(&mut csprng);
         let public_key = keypair.public();
         let message = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -405,7 +405,7 @@ mod x3dh_tests {
 
     #[test]
     fn test_diffie_hellman() {
-        let mut csprng = OsRng::new().unwrap();
+        let mut csprng = OsRng;
         let alice = IdentityKeyPair::generate(&mut csprng);
         let bob = EphemeralKeyPair::generate(&mut csprng);
 
@@ -417,7 +417,7 @@ mod x3dh_tests {
 
     #[test]
     fn test_x3dh() {
-        let mut csprng = OsRng::new().unwrap();
+        let mut csprng = OsRng;
 
         let alice = IdentityKeyPair::generate(&mut csprng);
 

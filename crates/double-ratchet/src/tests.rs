@@ -70,11 +70,11 @@ fn test_mirror_manual() {
 
 #[test]
 fn test_mirror_double_ratchet() {
-    use rand::OsRng;
+    use rand_core::OsRng;
 
     let info = b"foobar!";
-    let bob_keys = RatchetKeyPair::generate(&mut OsRng::new().unwrap());
-    let mut csprng = OsRng::new().unwrap();
+    let bob_keys = RatchetKeyPair::generate(&mut OsRng);
+    let mut csprng = OsRng;
     let mut alice = DoubleRatchet::with_peer(
         &info[..], get_rk(), &mut csprng, &bob_keys.public
     );
@@ -125,11 +125,11 @@ fn test_mirror_double_ratchet() {
 
 #[test]
 fn test_mirror_session() {
-    use rand::OsRng;
+    use rand_core::OsRng;
 
     let info = b"foobar!";
     let session = || SessionBuilder::new(&info[..], get_rk());
-    let mut csprng = OsRng::new().unwrap();
+    let mut csprng = OsRng;
 
     let bob_keys = RatchetKeyPair::generate(&mut csprng);
 
@@ -252,11 +252,11 @@ fn test_mirror_session() {
 
 #[test]
 fn test_unique_sessions() {
-    use rand::OsRng;
+    use rand_core::OsRng;
 
     let info = b"foobar!";
     let session = || SessionBuilder::new(&info[..], get_rk());
-    let mut csprng = OsRng::new().unwrap();
+    let mut csprng = OsRng;
 
     let bob_keys = RatchetKeyPair::generate(&mut csprng);
 
@@ -271,11 +271,11 @@ fn test_unique_sessions() {
 
 #[test]
 fn test_session_roundtrip_encrypted() {
-    use rand::OsRng;
+    use rand_core::OsRng;
 
     let info = b"foobar!";
     let session = || SessionBuilder::new(&info[..], get_rk());
-    let mut csprng = OsRng::new().unwrap();
+    let mut csprng = OsRng;
 
     let bob_keys = RatchetKeyPair::generate(&mut csprng);
 
@@ -306,14 +306,14 @@ fn test_session_roundtrip_encrypted() {
 
 #[test]
 fn test_authenticated_encryption() {
-    use rand::OsRng;
+    use rand_core::OsRng;
 
     use session::generate_ad;
     use encrypt::AeadCipher;
 
     let info = b"foobar!";
     let session = || SessionBuilder::new(&info[..], get_rk());
-    let mut csprng = OsRng::new().unwrap();
+    let mut csprng = OsRng;
 
     let bob_keys = RatchetKeyPair::generate(&mut csprng);
 

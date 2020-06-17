@@ -1,23 +1,22 @@
 use ed25519_dalek::Keypair;
-use use orion::hazardous::kdf::hkdf;
-use rand::OsRng;
+use orion::hazardous::kdf::hkdf;
+use rand_core::OsRng;
 use sha2::Sha512;
-use x25519_dalek::diffie_hellman;
-use x25519_dalek::generate_public;
+use x25519_dalek::{PublicKey, EphemeralSecret};
 
 use signal_common::convert::convert_ed25519_to_x25519;
 
 pub fn example() {
-    let mut csprng = OsRng::new().unwrap();
+    let mut csprng = OsRng;
 
     let info = "foobar!".as_bytes();
 
     // 2.4 Keys
     let ik_a = convert_ed25519_to_x25519(
-        &Keypair::generate::<Sha512, _>(&mut csprng),
+        &Keypair::generate(&mut csprng),
     ).unwrap();
 
-    let ik_a_public = generate_public(&ik_a.secret.as_bytes());
+    let ik_a_public = PublicKey::from(&ik_a.secret.as_bytes());
     assert_eq!(ik_a_public.as_bytes().len(), ik_a.public.as_bytes().len());
     for i in 0..ik_a_public.as_bytes().len() {
         assert_eq!(ik_a_public.as_bytes()[i], ik_a.public.as_bytes()[i]);
@@ -28,7 +27,7 @@ pub fn example() {
         (iks_b, ik_b, spk_b, spk_b_sig, opk_b),
         b_secrets,
     ) = {
-        let iks_b = Keypair::generate::<Sha512, _>(&mut csprng);
+        let iks_b = Keypair::generateSha512(&mut csprng);
         let ik_b = convert_ed25519_to_x25519(&iks_b).unwrap();
         let spk_b = convert_ed25519_to_x25519(
             &Keypair::generate::<Sha512, _>(&mut csprng),
